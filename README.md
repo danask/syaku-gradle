@@ -21,6 +21,8 @@ Grable 사이트에 보면 간략한 사용 메뉴얼을 볼 수 있다. http://
 
 II-3 이 설치방법을 설명하고 있다. Gradle은 자바 6 과 그 이상에 버전에 대응되고 있다라는 구문을 확인할 수 있고 그루비를 설치할 필요가 없다고 한다. 다들 알겠지만 Gradle은 그루비로 만들어진 프로젝트다. 그리고 운영체제 환경변수에서 JAVA_HOME 변수에는 자바 홈 디렉토리를 가르키도록 해야한다. 
 
+Gradle 다운로드에서 바이너리로 된 파일을 다운받고 압축을 푼다. 환경변수에 GRADLE_HOME 추가하고 Gradle 디렉토리를 설정한다. 그리고 PATH 환경변수에 Gradle 하위 폴더인 ./bin 폴더까지 경로를 추가해준다.
+
 ```
 $ cd ~
 $ vi .bash_profile
@@ -32,9 +34,6 @@ $ source .bash_profile
 ```
 
 그외 환경변수 설정은 구글링하면 찾을 수 있으니 생략한다.
-
-Gradle 다운로드에서 바이너리로 된 파일을 다운받고 압축을 푼다. 환경변수에 GRADLE_HOME 추가하고 Gradle 디렉토리를 설정한다.
-그리고 PATH 환경변수에 Gradle 하위 폴더인 ./bin 폴더까지 경로를 추가해준다.
 
 이제 설치가되었는 지 구동해보자.
 
@@ -60,6 +59,8 @@ OS:           Mac OS X 10.11.4 x86_64
 https://docs.gradle.org/current/userguide/tutorial_java_projects.html 가이드를 참고하면 도움된다.
 
 인텔리J에서 기본적으로 제공되는 Gradle 모듈을 사용하지 않고 오리지널 자바 프로젝트를 생성한 후 Gradle을 추가할 것이다. 그래서 아래와 같이 프로젝트를 생성한다.
+
+<iframe width="800" height="600" src="https://www.youtube.com/embed/yFnHKnsI8nI" frameborder="0" allowfullscreen></iframe>
 
 Gradle의 기본 프로젝트 레이아웃은 아래의 구조와 같다. 원한다면 레이아웃 구조를 변경할 수 있다.
 
@@ -207,6 +208,9 @@ Gradle 홈을 설정해주고 확인을 누른다.
 
 다음 포스팅은 스프링 프레임워크를 이용하여 Gradle 프로젝트를 만들어 볼 것이다.
 
+## 공유
+> Post : http://syaku.tistory.com/313  
+Github : https://github.com/syakuis/syaku-gradle/tree/helloWorld
 
 
 
