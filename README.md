@@ -1,5 +1,4 @@
 # Gradle Java Project & IntelliJ
---
 
 ### 개발환경
 > IntelliJ 14.x  
