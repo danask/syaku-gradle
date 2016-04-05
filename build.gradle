@@ -2,29 +2,9 @@ apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'war'
 
+archivesBaseName = 'syaku-gradle'
+group = 'org.syaku'
 version = '1.0'
-
-configurations {
-    provided
-}
-
-sourceSets {
-    main {
-        compileClasspath += configurations.provided
-    }
-    test {
-        compileClasspath += configurations.provided
-    }
-}
-
-repositories {
-    mavenCentral()
-}
-
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
-[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 def version = [
         spring: '4.2.4.RELEASE',
@@ -32,6 +12,23 @@ def version = [
         jackson: '2.1.0',
         junit: '4.9'
 ]
+
+buildDir = 'target'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'Syaku Gradle',
+                'Implementation-Version': version
+    }
+}
+
+repositories {
+    mavenCentral()
+}
 
 dependencies {
 
@@ -44,6 +41,7 @@ dependencies {
     }
 
     testCompile "org.springframework:spring-test:${version.spring}"
+
     testCompile "junit:junit:${version.junit}"
 
     compile "org.slf4j:slf4j-api:${version.slf4j}"
@@ -58,6 +56,25 @@ dependencies {
 
     compile "javax.inject:javax.inject:1"
 
-    provided "javax.servlet:javax.servlet-api:3.0.1",
-             "javax.servlet.jsp:jsp-api:2.2"
+    providedCompile "javax.servlet:javax.servlet-api:3.0.1",
+                    "javax.servlet.jsp:jsp-api:2.2"
+
+    runtime "javax.servlet:jstl:1.1.2"
+}
+
+test {
+    systemProperties 'property': 'value'
+}
+
+war {
+    archiveName = "${archivesBaseName}.${extension}"
+}
+
+task build(type: Copy) {
+    description = 'Generate exploded war'
+    group = 'build'
+    dependsOn war.dependsOn
+
+    into "${buildDir}/${archivesBaseName}"
+    with war
 }
