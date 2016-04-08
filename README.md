@@ -4,9 +4,7 @@
 
 그리고 내가 작성하는 포스팅은 내가 알기때문에 작성하는 것이 아니라 나도 알기위해 정리차원에서 작성되는 포스팅이라는 것을 다시 한번 알려둔다.
 
-인텔리J에서 프로젝트를 만드는 데 아무것도 없는 자바 프로젝트를 만들면 된다.
-
-최상위 경로에 build.gradle 파일을 생성하고 아래의 내용을 작성한다.
+인텔리J에서 프로젝트를 만드는 데 아무것도 없는 자바 프로젝트를 만들어 준다. 최상위 경로에 **build.gradle** 파일을 생성하고 아래의 내용을 작성한다.
 
 ```
 apply plugin: 'java'
@@ -91,7 +89,7 @@ task build(type: Copy) {
 }
 ```
 
-Gradle 빌드 설정 파일이다.
+각 라인들은 어떤 역활을 하는 지 설명하도록 하겠다.
 
 ```
 apply plugin: 'java'
@@ -108,7 +106,7 @@ version = '1.0'
 ```
 
 이번 프로젝트에 대한 설정정보를 기록해두었다. 이런 정보를 이용하여 빌드시 폴더나 파일명으로 사용되게 된다.  
-`archivesBaseName` 는 메이븐에서 `artifactId` 라고 생각하면 된다. 그리고 group = groupId 일 것이다.
+**archivesBaseName** 는 메이븐에서 **artifactId** 라고 생각하면 된다. 그리고 group = groupId 일 것이다.
 
 ```
 def version = [
@@ -119,7 +117,7 @@ def version = [
 ]
 ```
 
-필수 라이브러리나 라이브러리 버전이 통일되는 것이라면 이렇게 변수로 관리하면 된다. 그래서 버전을 변경할 경우 위의 값만 변경하면 되기때문에 관리가 쉬워진다. 사용번은 `"${version.slf4j}"` 이렇게하면 된다.
+필수 라이브러리나 라이브러리 버전이 통일되는 것이라면 이렇게 변수로 관리하면 된다. 그래서 버전을 변경할 경우 위의 값만 변경하면 되기때문에 관리가 쉬워진다. 사용번은 **"${version.slf4j}"** 이렇게하면 된다.
 
 ```
 buildDir = 'target'
@@ -129,7 +127,9 @@ targetCompatibility = 1.8
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 ```
 
-buildDir 이용하여 빌드 경로를 변경할 수 있다.  
+**buildDir** 이용하여 빌드 경로를 변경할 수 있다. 그리고 인텔리J의 경로도 변경해주자.
+`File > Project Structure` 실행 후 Project 메뉴에서  Project compiler output 의 경로는 변경하면 된다.
+
 소스 컴파일과 대상 컴파일 자바 버전을 설정한다. 없는 경우 환경변수에 설정된 자바버전을 사용한다. 그리고 컴파일시 언어셋을 지정하는 데 좀 더 정확하게 깊숙이 찾아서 인코딩하겠다는 설정으로 보인다.
 
 ```
@@ -188,7 +188,49 @@ task build(type: Copy) {
 
 마지막으로 배포에 관한 설정이다. war 를 생성시 archiveName 이용하여 파일명을 직접 설정할 수 있게 했고, 빌드가 완료되면 소스를 모두 ${buildDir} 아래 프로젝트명을 이용하여 복사하라는 명령이다.
 
-메이븐에서 install 하면 target 아래 프로젝트명을 가진 폴더아래 빌드가 완료된 최종 소스를 만들어주는 역활과 같다고 보면 된다.
+메이븐에서 install 하면 target 폴더 아래 프로젝트명을 가진 폴더에 빌드가 완료된 최종 소스를 만들어주는 역활과 같다고 보면 된다.
+
+빌드된 최종 소스를 인텔리J에 등록하여 서버를 구동해본다 이 과정은 아래 동영상으로 확인할 수 있다. 웹으로 해당 경로를 접속하여 확인하면 된다.
+
+
+
+
+서버를 구동하지 않고 TDD(테스트 주도 개발)를 구현하여 실행하여도 된다.
+
+```java
+@WebAppConfiguration
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = {
+		"file:src/main/webapp/WEB-INF/config/*-servlet.xml",
+		"classpath*:config/*.xml"
+})
+public class DemoControllerTest {
+
+	@Autowired
+	private WebApplicationContext wac;
+
+	private MockMvc mockMvc;
+
+	@Before
+	public void setup() {
+		this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
+	}
+
+	@Test
+	public void dispDemoView() throws Exception {
+		this.mockMvc.perform(get("/demo")).andExpect(status().isOk())
+				.andDo(MockMvcResultHandlers.print())
+				.andReturn();
+	}
+}
+```
+
+다음 포스팅에는 멀트 프로젝트를 구현해볼것이다.
+
+### 추천 참고자료
+
+- gradle 한글 문서 http://kwonnam.pe.kr/wiki/gradle
+- gradle 문서 https://docs.gradle.org/current/userguide/userguide.html
 
 
 
