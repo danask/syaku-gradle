@@ -192,7 +192,7 @@ task build(type: Copy) {
 
 빌드된 최종 소스를 인텔리J에 등록하여 서버를 구동해본다 이 과정은 아래 동영상으로 확인할 수 있다. 웹으로 해당 경로를 접속하여 확인하면 된다.
 
-
+<iframe width="640" height="480" src="https://www.youtube.com/embed/YPVIPY8SReo" frameborder="0" allowfullscreen></iframe>
 
 
 서버를 구동하지 않고 TDD(테스트 주도 개발)를 구현하여 실행하여도 된다.
@@ -226,6 +226,12 @@ public class DemoControllerTest {
 ```
 
 다음 포스팅에는 멀트 프로젝트를 구현해볼것이다.
+
+### 문서정보
+
+- Post : http://syaku.tistory.com/314
+- Github : https://github.com/syakuis/syaku-gradle/tree/spring-web
+
 
 ### 추천 참고자료
 
