@@ -1,20 +1,11 @@
 apply plugin: 'java'
 apply plugin: 'idea'
 
-version = '1.0'
+archivesBaseName = 'syaku-gradle'
+group = 'org.syaku'
+version = '1.0.0'
 
-configurations {
-    provided
-}
-
-sourceSets {
-    main {
-        compileClasspath += configurations.provided
-    }
-    test {
-        compileClasspath += configurations.provided
-    }
-}
+buildDir = 'target'
 
 repositories {
     mavenCentral()
@@ -22,36 +13,33 @@ repositories {
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
-
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
+
+configurations.all {
+    exclude group: "commons-logging", module: "commons-logging"
+}
+
 def version = [
-        spring: '4.2.4.RELEASE',
         slf4j: '1.7.12',
-        jackson: '2.1.0',
-        junit: '4.9'
+        junit: '4.9',
+        spring: '4.2.4.RELEASE',
+        aspectj: '1.8.8',
+        jackson: '2.1.0'
 ]
 
 dependencies {
-    compile("org.springframework:spring-context:${version.spring}") {
-        exclude group: 'commons-logging', module: 'commons-logging'
-    }
+    compile "org.springframework:spring-context:${version.spring}"
+
+    compile "org.aspectj:aspectjweaver:${version.aspectj}"
+
+    runtime "org.slf4j:jcl-over-slf4j:${version.slf4j}"
+    compile "ch.qos.logback:logback-classic:1.1.7"
 
     testCompile "org.springframework:spring-test:${version.spring}"
     testCompile "junit:junit:${version.junit}"
+}
 
-    compile "org.slf4j:slf4j-api:${version.slf4j}"
-    runtime "org.slf4j:jcl-over-slf4j:${version.slf4j}",
-            "org.slf4j:slf4j-log4j12:${version.slf4j}"
-    runtime("log4j:log4j:1.2.17") {
-                exclude group: 'javax.mail', module: 'mail'
-                exclude group: 'javax.jms', module: 'jms'
-                exclude group: 'com.sun.jdmk', module: 'jmxtools'
-                exclude group: 'com.sun.jmx', module: 'jmxri'
-            }
-
-    compile "javax.inject:javax.inject:1"
-
-    provided "javax.servlet:javax.servlet-api:3.0.1",
-             "javax.servlet.jsp:jsp-api:2.2"
+test {
+    systemProperties 'property': 'value'
 }
