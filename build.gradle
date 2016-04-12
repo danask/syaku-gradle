@@ -25,11 +25,13 @@ def version = [
         junit: '4.9',
         spring: '4.2.4.RELEASE',
         aspectj: '1.8.8',
-        jackson: '2.1.0'
+        jackson: '2.1.0',
+        mariadb: '1.4.0',
+        hibernate: '5.1.0.Final'
 ]
 
 dependencies {
-    compile "org.springframework:spring-context:${version.spring}"
+    compile "org.springframework:spring-webmvc:${version.spring}"
 
     compile "org.aspectj:aspectjweaver:${version.aspectj}"
 
@@ -38,6 +40,16 @@ dependencies {
 
     testCompile "org.springframework:spring-test:${version.spring}"
     testCompile "junit:junit:${version.junit}"
+
+    compile "org.hibernate:hibernate-core:${version.hibernate}"
+
+    compile "org.mariadb.jdbc:mariadb-java-client:${version.mariadb}"
+    compile "org.springframework:spring-jdbc:${version.spring}",
+            "org.springframework:spring-orm:${version.spring}",
+            "org.springframework:spring-tx:${version.spring}",
+            "commons-dbcp:commons-dbcp:1.4"
+
+    compile 'org.apache.commons:commons-lang3:3.4'
 }
 
 test {
