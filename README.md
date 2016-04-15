@@ -333,7 +333,7 @@ org.syaku.demo.domain.Demo@37e1e13[demo_idx=117,name=최석균2,value=syaku]
 ```
 
 #### 공유자료
-- Post : 
+- Post : http://syaku.tistory.com/315
 - Github : https://github.com/syakuis/syaku-gradle/tree/spring-hibernate5
 
 #### 추천 참고자료
