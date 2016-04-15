@@ -8,25 +8,29 @@ Spring 4.2.4.RELEASE
 Hibernate 5.1.0.Final  
 MariaDB 10.1.13
 
-자바 ORM 프레임워크 하이버네이트에 대해서 알아본다. 나는 여태껏 myBATIS 프레임워크를 사용해 왔는 데 몽고DB를 사용하기 위해서 Spring JPA를 접하게 되었는 다. 객체를 이용해서 쿼리를 완성하는 것이 참 매력적이였다. 이렇게 되면 어떤 DBMS를 사용하든 개발자는 SQL에 신경쓰지 않아도 된다. 개발자는 ORM 메뉴얼대로 프로그램을 코딩하면 ORM 프레임워크 혹은 JPA가 알아서 척척 쿼리를 완성한다는 것이다. 하지만 완벽하게 쿼리를 만들지 못할 수 있기 때문에 직접 타이핑할 수 있게 기능도 제공한다.
+나는 여태껏 myBATIS를 사용해왔다. 요즘은 다들 ORM 프레임워크 하이버네이트나 Spring JPA를 많이 사용하는 것 같아 이참에 한번 공부해보기로 맘먹고 포스팅을 준비해보았다. 예전에 개인적인 프로젝트로 MongoDB를 사용하면서 Spring JPA를 사용했는 데, 객체를 이용해한 쿼리 구문이 참 매력적이였다. 
 
-프레임워크를 사용하기 전에!!! 올바른 자바 프레임워크 선택하기 포스팅을 한번 읽어보고 시작하는 것이 좋을 것 같다.
+ORM 이름만봐도 대충 뭐 객체를 이용하는 것이구나라고 생각만 했는 데 직접 사용해보니 현대적 방식의 패턴임은 분명한 것 같다. 객체로 릴레이션을 구현하면서 자동적이로 쿼리가 완성되니 어떤 DBMS를 사용한다 하더라도 개발자는 SQL을 신경쓰지 않아도 된다. 그렇다고 SQL을 모르는 사람이 사용할 수 있다고 말하는 것은 아니다.
+
+아~ ORM(Object-Relation Mapping)는 DBMS의 객체와 관계를 연결해주는?? 객체지향 프로그램을 하기 위한 기술이다. ( 참고 : http://debop.blogspot.kr/2012/02/orm-object-relational-mapping.html)  
+JPA(Java Persistent API)는 ORM을 위한 표준 기술이다. ( 참고 : http://blog.woniper.net/255 ) 마지막으로 하이버네이트(Hibernate)는 JBoss에서 개발한 ORM프레임워크이다. Spring JPA는 Spring 프레임워크 하위 프로젝트인 Spring Data에 속해있는 JPA 라이브러리이다. ( Spring JPA 한글 번역 : http://arahansa.github.io/docs_spring/jpa.html )
+
+그래서 오늘의 주제는 하이버네이트이다. 사용하기전에 한번 읽어보면 좋은 내용이 있어 링크를 해두었다.
 http://www.moreagile.net/2013/11/blog-post_26.html
 
-하이버네이트와 좀 별개의 내용이지만 이제와서??? slf4j에 대해 한번 검토하고 넘어가야 할것같다. 알면 스킵~
-난 Log4j보다 slf4j가 좋다는 이야기만 듣고 사용했었는 데... 왜? 대체 무엇이? 라는 생각을 할 시간이 없었다... 그래서 이번에는 이것저것 찾아보고 혹시나 나같은 사람이 있지 않을까 생각하여 좋은 포스팅을 링크하였다. 읽어보면 도움이 많이 될 것이다.
+그리고 관련이 없는 내용이지만 이번에는 꼭 알아보고 넘어갔으면 하는 라이브러리가 있다. 그것은 로그 관리 라이브러리 slf4j이다. 좋다는 이야기는 많이 들었지만 무엇이 좋은지 한번도 알아본적이 없었다. 무지 바빠다... ;;; 여튼 이것저것 찾아보면서 좋은 내용을 링크해보았다.
 
-### slf4j와 LOGBack이 무엇이며 어떻게 좋은가?
+#### slf4j와 LOGBack이 무엇이며 어떻게 좋은가?
 https://beyondj2ee.wordpress.com/2012/11/09/logback-%EC%82%AC%EC%9A%A9%ED%95%B4%EC%95%BC-%ED%95%98%EB%8A%94-%EC%9D%B4%EC%9C%A0-reasons-to-prefer-logback-over-log4j/
 
-### slf4j 설정 방식이 조금씩 다른데 왜 그런지?
+#### slf4j 설정 방식이 조금씩 다른데 왜 그런지?
 http://whiteship.tistory.com/2541
 
-### slf4j와 LOGBack 설정방법
+#### slf4j와 LOGBack 설정방법
 http://www.mkyong.com/spring-mvc/spring-mvc-logback-slf4j-example  
-[참고] http://saltnlight5.blogspot.kr/2013/08/how-to-configure-slf4j-with-different.html
+http://saltnlight5.blogspot.kr/2013/08/how-to-configure-slf4j-with-different.html
 
-이제 본격적으로 하이버네이트를 사용해보자. 최근 gradle을 사용하고 있어서 빌드는 gradle로 하지만 maven과는 크게 다르지 않다~ 자세한 소스는 Github를 통해 확인하기 바란다.
+서론이 너무 길어진 것 같다. 이제 본격적인 하이버네이트 세상에 첫발을 내딛어보자. 우선 개발환경을 구축해야 한다. 최근에 빌드툴을 Gradle을 사용하고 있다. 하지만 Maven하고 설정은 크게 다르지 않기때문에 의존성만 잘 설정해주면 될 것 같다. 자세한 소스는 Github를 확인하기 바란다.
 
 **# build.gradle**
 
@@ -71,7 +75,7 @@ dependencies {
 
 ```
 
-maven에서는 dependencies 라이브러리만 pom.xml에 알맞게 추가해주면 될 것이다. 그리고 스프링 설정은 다음과 같이 추가한다.
+다음은 스프링 프레임워크 애플리케이션 설정부분이다.
 
 **src/main/resources/org/syaku/config/hibernate-context.xml**
 
@@ -100,13 +104,15 @@ maven에서는 dependencies 라이브러리만 pom.xml에 알맞게 추가해주
 </beans>
 ```
 
-packagesToScan에 설정된 패키지 위치에 있는 엔티티를 자동으로 주입하게 된다. 엔티티 클래스가 무엇일까??? 자바 디자인 패턴이 그렇듯이 꼭 정답은 없지만 테이블 정의 클래스라고 해야하나? 하이버네이트에서는 퍼시스턴스 클래스라고 하는 것 같다. 뭐 그렇다. 해당 엔티티 클래스에는 어노테이션 엔티티가 있어야 한다.
+packagesToScan 프로퍼티에 퍼시스턴트 클래스? 엔티티클래스? 가 위치한 패키지를 입력하면 된다. Ant style pattern으로 입력이 가능하다. ( 퍼시스턴트란? http://egloos.zum.com/stringargs/v/1794387 )
 
-hibernateProperties 하이버네이트 설정을 수동으로 관리할 수 있다. 아래는 기본적으로 사용하는 3가지 설정값들이다.
+퍼시스턴트 클래스 혹은 엔티티 클래스란 테이블 정의 클래스라고 한다. 즉 DB 테이블을 객체화 한 클래스라고 보면 된다. 해당 클래스에 `@Entity` 어노테이션이 있어야 자동으로 로드된다.
+
+hibernateProperties 프로퍼티는 하이버네이트 설정을 수동으로 관리할 수 있다.
 
 - hibernate.dialect:
 - hibernate.format_sql:
-- hibernate.show_sql: 실행된 쿼리를 출력해준다. 디버깅할때 유용하다.
+- hibernate.show_sql: 실행된 쿼리를 디버깅할 수 있게 로그를 출력한다.
 
 	```
 	2016-04-11 14:21:41 INFO  o.s.o.h.HibernateTransactionManager - Using DataSource [org.apache.commons.dbcp.BasicDataSource@27cab24c] of Hibernate SessionFactory for HibernateTransactionManager
@@ -123,7 +129,8 @@ hibernateProperties 하이버네이트 설정을 수동으로 관리할 수 있�
 	        (?, ?)
 	```
 
-데모 테이블을 생성하여 CRUD 기본적인 기능을 구현해본다.
+
+하이버네이트를 사용하기 위한 테이블을 만들어보겠다. 아래의 스키마를 이용해 생성하고 CRUD 기능을 구현해보자.
 
 **데모 테이블 스키마**
 
@@ -194,25 +201,20 @@ public class DemoDAOTest {
 }
 ```
 
-하암~ 테스트 소스를 만들다보니 이미 하이버네이트 경험했던 사람들이 주의하라는 말을 이해할 수 있을 것 같다. `쥐뿔도 모르면 함부로 쓰지말아라...` 하이버네이트 세상에는 그들만의 규칙이 있다. 그걸 이해해야 한다. 음... ORM, JPA라고해야하나?? 여튼 꼭 책을 사서 공부를 하든 한글 문서를 공부를 하든 라이프사이클을 이해하기 바란다.
+처음이라 그런지 테스트를 만들면서도 하이버네이트를 단순하게 생각하고 사용하면 안될것 같다는 생각이 든다. 꼭 꼭 하이버네이트의 라이프사이클은 이해하고 사용하기 바란다.
+( 참고: http://dev.anyframejava.org/anyframe/doc/core/3.2.0/corefw/guide/hibernate-introduction.html )
 
-테스트 소스에는 CRUD에 관한 작업으로 모두 담았다. 하이버네이트는 배치로 구동하는 것 같다. 그래서 처리 순서가 위에서 아래로 순차적으로 흐르지 않고 하이버네이트에 의해 순서가 처리된다. 작업 하나하나가 바로 디비로 전달되는 것이 아니라 메모리에 기억해두었다가 커밋이 일어나면 처리된다. 배치처리가 된다는 것~
-
-그래서 순차적으로 처리하고 싶다면 중간중간에 flush를 실행해서 detached 상태를 만들어 주면 된다.
-
-하이버네이트에는 3가지 퍼시스턴스 객체 상태를 가질 수 있다.
+테스트 소스에는 CRUD에 관한 작업으로 모두 담았다. 하이버네이트는 배치를 이용하는 것 같고 그래서 그런지 처리 순서가 위에서 아래로 순차적으로 흐르지 않고 하이버네이트에 의해 순서가 조절되는 것 같다. 작업 하나하나가 바로 디비로 전달되는 것이 아니라 메모리에 기억해두었다가 커밋이 일어나면 처리가 되는 것 같다. 그래서 순차적으로 처리하고 싶다면 중간중간에 flush를 실행해서 detached 상태를 만들어 주면 된다. 하이버네이트에는 3가지 퍼시스턴스 객체 상태를 가질 수 있다.
 
 - Transient: 퍼시스턴스 객체가 생성된 상태지만 하이버네이트에서 관리되지 않는 상태.
 - Persistent: 하이버네이트에서 관리되는 상태.
 - Detached: 하이버네이트에서 관리가 제외된 상태.
 
-[참고] http://dev.anyframejava.org/anyframe/doc/core/3.2.0/corefw/guide/hibernate-introduction.html
+이제 테스트소스를 보도록하자. 원래 DAO를 직접 사용하는 것 보다 Service를 통해 사용하는 것이 바람직하지만 테스트를 위해 직접 DAO를 사용하여 테스트를 구현하였다. 그리고 DAO에는 트랜잭션이 걸려있지 않아 직접 어노테이션을 이용해 트랜잭션을 걸어주었다. 꼭 트랜잭션 설정이 있어야 오류가 발생하지 않는 다. `@Transactional`
 
-이제 테스트소스를 보도록하자. 원래 DAO를 바로 불러서 사용하는 것 보다 Service 를 거쳐서 사용하는 것이 바람직하다. 하지만 테스트를 위해 직접 DAO를 주입하여 사용한 테스트 클래스이다. 그래서 트랜잭션이 걸려있지 않아 직접 어노테이션을 이용해 트랜잭션을 걸어주었다. 꼭 트랜잭션이 있어야 겠다고 하이버네이트는 오류를 던저주신다. `@Transactional`
+`insertToDelete` 테스트는 insert 후 delete를 실행하는 데 2가지 방법으로 구성했다. 첫번째는 쿼리를 직접 타이핑한 작업이고 두번째는 delete를 사용한 것이다. 여기서 두번째 delete는 퍼시스턴트 상태의 객체를 사용해야 삭제가 된다.
 
-`insertToDelete` 테스트는 insert 후 delete 를 실행하는 데 2가지 방법으로 구성했다. 첫번째는 쿼리를 직접 타이핑한 작업이고 두번째는 delete를 사용한 것이다. 여기서 두번째 delete는 객체를 퍼시스턴트 상태로 만든다음에 그걸 던져줘야 삭제가 된다.
-
-그전에 첫번째 쿼리를 직접 타이핑하는 방식을 설명하겠다. 하이버네이트에는 3가지 메서드를 지원한다.
+첫번째 쿼리를 직접 타이핑하는 방식에 하이버네이트에서 지원하는 3가지 기능을 설명하겠다.
 
 - createQuery: HQL(Hibernate Query 언어)을 사용할 수 있다.
 - createSQLQuery: native SQL을 사용할 수 있다.
@@ -248,9 +250,7 @@ Hibernate:
 org.syaku.demo.domain.Demo@32bde6a[demo_idx=0,name=최석균2,value=syaku2]
 ```
 
-save는 demo_idx가 있고 merge는 demo_idx가 없다. 즉 save는 실행후 `persistent` 상태를 유지하고 merge는 `detached` 상태가 된다.
-
-정확하기 이해하기 위해 테스트를 하나 더 해보겠다.
+save는 demo_idx가 있고 merge는 demo_idx가 없다. 즉 save는 실행후 `persistent` 상태를 유지하고 merge는 `detached` 상태가 된다. 좀 더 정확한 이해를 위해 테스트를 하나 더 해보겠다.
 
 ```java
 	@Test
@@ -275,7 +275,7 @@ save는 demo_idx가 있고 merge는 demo_idx가 없다. 즉 save는 실행후 `p
 
 위 소스는 persistent 상태와 detached 상태인 경우를 이해하기 위한 테스트이다.
 
-우선 demo1을 인서트한 후 demo1의 이름을 수정하고 플래쉬를 했다. 이럴경우 insert 요청만 했는데 업데이트까지 자동으로 진행한다. 우와!!!!!!!!! 그리고 flush&clear를 요청하여 detached 상태를 만든 후 다시 호출하고 변경해 보았다. 변화가 없다. 아래 로그를 보면 더 정확하게 확인 할 수 있다.
+우선 demo1을 인서트한 후 demo1의 이름을 수정하고 플래쉬를 했다. 이럴경우 insert 요청만 했는데 업데이트까지 자동으로 진행한다. 정말 신기하다. 그리고 flush&clear를 요청하여 detached 상태를 만든 후 다시 호출하고 변경해 보았다. 변화가 없다. 아래 로그를 보면 더 정확하게 확인 할 수 있다.
 
 [참고] http://stackoverflow.com/questions/20395543/how-to-change-the-ordering-of-sql-execution-in-hibernate
 
@@ -311,6 +311,8 @@ org.syaku.demo.domain.Demo@37e1e13[demo_idx=117,name=최석균2,value=syaku]
 org.syaku.demo.domain.Demo@37e1e13[demo_idx=117,name=최석균2,value=syaku]
 ```
 
+이런식이라면 코딩라인이 엄청 줄어들 것 같다. 그리고 한번 요청한 쿼리는 다시 요청없이 그대로 사용할 수 있어 매우 효율적이다. 사용하면 할 수록 참 매력적이다. 많은 처리 작업으로 인한 충돌이 생기지 않을까? 의문이 생기지만 이미 훌륭한 오픈소스로 인증된 프레임워크이기에 의심할 필요는 없을 것 같다. 음 더 많은 내용을 작성하고 싶지만 아직 아는 것이 많지 않기때문에 잘못된 정보로 혼란을 줄 수 있으니 여기까지만 하도록하겠다. 다음에는 Spring JPA와 QueryDSL을 사용해 볼 것이다.
+
 #### Spring AOP 트랜잭션 설정
 
 ```xml
@@ -327,8 +329,6 @@ org.syaku.demo.domain.Demo@37e1e13[demo_idx=117,name=최석균2,value=syaku]
 	<aop:advisor pointcut-ref="pointcutService" advice-ref="adviceService" />
 </aop:config>
 ```
-
-일반적인 설정방법과 크게 다르지 않다.
 
 #### 공유자료
 - Post : 
