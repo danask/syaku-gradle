@@ -8,7 +8,7 @@ Spring 4.2.4.RELEASE
 Hibernate 5.1.0.Final  
 MariaDB 10.1.13
 
-자바 ORM 프레임워크 하이버네이트에 대해서 알아본다. 나는 여태껏 myBATIS 프레임워크를 사용해 왔는 데 몽고DB를 사용하기 위해서 Spring JPA를 접하게 되었는 다. 객체를 이용해서 쿼리를 완성하는 것이 참 매력적이였다. 이렇게 되면 어떤 DBMS(NoSQL 제외)를 사용하든 개발자는 신경쓰지 않아도 된다. 개발자는 ORM 메뉴얼에 있는 설명대로 프로그램을 코딩하면 ORM 프레임워크 혹은 JPA가 알아서 척척 쿼리를 완성한다는 것이다. 하지만 완벽하게 쿼리를 척척 만들지 못할 수 있기 때문에 직접 타이핑할 수 있게 기능도 제공한다.
+자바 ORM 프레임워크 하이버네이트에 대해서 알아본다. 나는 여태껏 myBATIS 프레임워크를 사용해 왔는 데 몽고DB를 사용하기 위해서 Spring JPA를 접하게 되었는 다. 객체를 이용해서 쿼리를 완성하는 것이 참 매력적이였다. 이렇게 되면 어떤 DBMS를 사용하든 개발자는 SQL에 신경쓰지 않아도 된다. 개발자는 ORM 메뉴얼대로 프로그램을 코딩하면 ORM 프레임워크 혹은 JPA가 알아서 척척 쿼리를 완성한다는 것이다. 하지만 완벽하게 쿼리를 만들지 못할 수 있기 때문에 직접 타이핑할 수 있게 기능도 제공한다.
 
 프레임워크를 사용하기 전에!!! 올바른 자바 프레임워크 선택하기 포스팅을 한번 읽어보고 시작하는 것이 좋을 것 같다.
 http://www.moreagile.net/2013/11/blog-post_26.html
@@ -30,7 +30,7 @@ http://www.mkyong.com/spring-mvc/spring-mvc-logback-slf4j-example
 
 **# build.gradle**
 
-```json
+```
 ... 생략 ...
 
 configurations.all {
@@ -330,6 +330,9 @@ org.syaku.demo.domain.Demo@37e1e13[demo_idx=117,name=최석균2,value=syaku]
 
 일반적인 설정방법과 크게 다르지 않다.
 
+#### 공유자료
+- Post : 
+- Github : https://github.com/syakuis/syaku-gradle/tree/spring-hibernate5
 
 #### 추천 참고자료
 - http://whiteship.tistory.com/category/Hibernate
