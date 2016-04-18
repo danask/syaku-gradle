@@ -9,7 +9,7 @@
 	">
 
 	<!-- 현재 로그인 상태를 체크하기 위해 세션을 생성함. -->
-	<http auto-config="true" use-expressions="true" create-session="always">
+	<http auto-config="true" use-expressions="true" create-session="always" entry-point-ref="unauthorizedHandler">
 		<form-login
 				username-parameter="user_id"
 				password-parameter="password"
@@ -24,23 +24,65 @@
 				success-handler-ref="signOutSuccessHandler"
 				delete-cookies="JSESSIONID"
 				/>
+
+		<access-denied-handler ref="accessFailureHandler" />
+		<csrf disabled="true"/>
+		<session-management session-authentication-strategy-ref="sas"/>
+
+		<custom-filter ref="authenticationTokenFilter" before="FORM_LOGIN_FILTER" />
 	</http>
 
-	<beans:bean id="consumerService" class="org.syaku.security.service.ConsumerService" />
-	<beans:bean id="authenticationProvider" class="org.syaku.security.ConsumerProvider" />
+	<!-- SESSION MANAGEMENT -->
+	<beans:bean id="sas" class="org.springframework.security.web.authentication.session.CompositeSessionAuthenticationStrategy">
+		<beans:constructor-arg>
+			<beans:list>
 
-	<beans:bean id="requestCache" class="org.springframework.security.web.savedrequest.HttpSessionRequestCache"/>
+				<beans:bean class="org.springframework.security.web.authentication.session.ConcurrentSessionControlAuthenticationStrategy">
+					<beans:constructor-arg ref="sessionRegistry"/>
+					<beans:property name="maximumSessions" value="-1" />
+					<beans:property name="exceptionIfMaximumExceeded" value="false" />
+				</beans:bean>
+
+				<beans:bean class="org.springframework.security.web.authentication.session.SessionFixationProtectionStrategy">
+				</beans:bean>
+
+				<beans:bean class="org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy">
+					<beans:constructor-arg ref="sessionRegistry"/>
+				</beans:bean>
+
+			</beans:list>
+		</beans:constructor-arg>
+	</beans:bean>
+	<beans:bean id="sessionRegistry" class="org.springframework.security.core.session.SessionRegistryImpl" />
+	<!-- SESSION MANAGEMENT -->
+
+
+	<beans:bean id="accessFailureHandler" class="org.syaku.security.handler.AccessFailureHandler" />
+	<beans:bean id="authenticationTokenFilter" class="org.syaku.security.filter.AuthenticationTokenFilter" />
+
+	<beans:bean id="consumerService" class="org.syaku.security.service.ConsumerService">
+		<beans:property name="userData">
+			<beans:map>
+				<beans:entry key="admin" value="$2a$10$ZilMCNNz7QotC5MxBWaCt.XKDTpESAe8PnxFO1LYCf2MqDXXv4Pf." />
+				<beans:entry key="test" value="$2a$10$ZilMCNNz7QotC5MxBWaCt.XKDTpESAe8PnxFO1LYCf2MqDXXv4Pf." />
+			</beans:map>
+		</beans:property>
+	</beans:bean>
+
+	<beans:bean id="consumerProvider" class="org.syaku.security.ConsumerProvider" />
+
+	<beans:bean id="unauthorizedHandler" class="org.syaku.security.handler.UnauthorizedHandler" />
 	<beans:bean id="signInSuccessHandler" class="org.syaku.security.handler.SignInSuccessHandler" />
 
 	<beans:bean id="signInFailureHandler" class="org.syaku.security.handler.SignInFailureHandler" />
-	<beans:bean id="signOutSuccessHandler" class="org.syaku.security.handler.SignOutSuccessHandler">
-		<beans:constructor-arg value="/login" />
-	</beans:bean>
+	<beans:bean id="signOutSuccessHandler" class="org.syaku.security.handler.SignOutSuccessHandler" />
 
 	<beans:bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
 
 	<authentication-manager alias="authenticationManager">
-		<authentication-provider ref="authenticationProvider" />
+		<authentication-provider ref="consumerProvider" />
 	</authentication-manager>
+
+	<beans:bean id="authenticationService" class="org.syaku.security.service.AuthenticationService"/>
 
 </beans:beans>

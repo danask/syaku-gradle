@@ -3,6 +3,8 @@ package org.syaku.security.handler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
+import org.syaku.common.http.Requesting;
+import org.syaku.security.enums.StatusCode;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -21,22 +23,22 @@ public class SignInFailureHandler extends SimpleUrlAuthenticationFailureHandler 
 
 	@Override
 	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-		boolean error = true;
-		String message = exception.getMessage();
 
-		response.setContentType("application/json");
-		response.setCharacterEncoding("utf-8");
+		if(Requesting.isAjax(request)) {
+			String message = exception.getMessage();
 
-		Map<String, Object> result = new HashMap();
-		result.put("error", error);
-		result.put("message", message);
+			response.setContentType("application/json");
+			response.setCharacterEncoding("utf-8");
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 
-		ObjectMapper objectMapper = new ObjectMapper();
-		String json = objectMapper.writeValueAsString(result);
-		PrintWriter out = response.getWriter();
-		out.print(json);
-		out.flush();
-		out.close();
-
+			ObjectMapper objectMapper = new ObjectMapper();
+			String json = objectMapper.writeValueAsString(new SuccessHandler(message, true, StatusCode.AUTHENTICATIONFAILURE));
+			PrintWriter out = response.getWriter();
+			out.print(json);
+			out.flush();
+			out.close();
+		} else {
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+		}
 	}
 }

@@ -9,11 +9,15 @@
         </layout>
     </appender>
 
-    <logger name="org.springframework" level="INFO" additivity="false">
+    <logger name="org.springframework" level="debug" additivity="false">
         <appender-ref ref="STDOUT" />
     </logger>
 
-    <root level="error">
+    <logger name="org.syaku" level="debug" additivity="false">
+        <appender-ref ref="STDOUT" />
+    </logger>
+
+    <root level="debug">
         <appender-ref ref="STDOUT" />
     </root>
 
